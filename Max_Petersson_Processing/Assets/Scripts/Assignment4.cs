@@ -33,7 +33,7 @@ public class Assignment4 : ProcessingLite.GP21
         }
         if (Input.GetMouseButton(0))
         {
-           // Background(0);
+           
              //hållet den ska åka
 
             Line(circlePosition.x, circlePosition.y, mousePosition.x, mousePosition.y);
