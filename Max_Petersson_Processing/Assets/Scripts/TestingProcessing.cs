@@ -4,12 +4,9 @@ using UnityEngine;
 
 public class TestingProcessing : ProcessingLite.GP21
 {
-    // Start is called before the first frame update
-   
-
     public float x;
     float y = 20f;
-    
+
     void Start()
     {
         Line(0f, 0f, .5f, 1f);
@@ -26,13 +23,6 @@ public class TestingProcessing : ProcessingLite.GP21
         {
             Line(0f, y, i, 0f);
             y--;
-
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-       
     }
 }

@@ -4,66 +4,67 @@ using UnityEngine;
 
 public class Assignment5Velocity : ProcessingLite.GP21
 {
-    private float dirx;
-    private float diry;
-    private float posx;
-    private float posy;
-    private float rad = 3f;
+    private float directionX;
+    private float directionY;
+    private float positionX;
+    private float positionY;
+    private float radius = 3f;
+
     [SerializeField] private float speedLimit = 40f;
     [SerializeField] private float acceleration = 40f;
     [SerializeField] private float deAcc = 10f;
+    [SerializeField] private float velocity = 3f;
     private bool activateDeAcc = false;
-    [SerializeField] private float speed = 3f;
-    
+
     void Update()
     {
         Background(0, 0, 0);
 
-        if (posy > Height - rad || posy < rad)
+        if (positionY > Height - radius || positionY < radius)
         {
-            diry *= -1f;
+            directionY *= -1f;
         }
-        if (posx > Width - rad)
+        if (positionX > Width - radius)
         {
-            posx = posx - Width;
+            positionX -= Width;
         }
-        if(posx < rad)
+        if(positionX < radius)
         {
-            posx = posx + Width;
+            positionX += Width;
         }
-       
 
         if (Input.GetButton("Vertical") == true || Input.GetButton("Horizontal") == true)
         {
-            diry = Input.GetAxis("Vertical");
-            dirx = Input.GetAxis("Horizontal");
-            speed += +acceleration * Time.deltaTime;
+            directionY = Input.GetAxis("Vertical");
+            directionX = Input.GetAxis("Horizontal");
+            velocity += acceleration * Time.deltaTime;
             activateDeAcc = false;
-            if (speed > speedLimit)
+
+            if (velocity > speedLimit)
             {
-                speed = speedLimit;
+                velocity = speedLimit;
             }
         }
         else if (Input.GetButtonUp("Vertical") || Input.GetButtonUp("Horizontal"))
         {
             activateDeAcc = true;
         }
+
         if (activateDeAcc == true)
         {
-            speed -= deAcc * Time.deltaTime;
-            if (speed <= 0f)
+            velocity -= deAcc * Time.deltaTime;
+            if (velocity <= 0f)
             {
-                speed = 0f;
+                velocity = 0f;
             }
         }
         
-        posy += speed * diry * Time.deltaTime;
-        posx += speed * dirx * Time.deltaTime;
+        positionY += velocity * directionY * Time.deltaTime;
+        positionX += velocity * directionX * Time.deltaTime;
         
-
-        Circle(posx + Width, posy, rad);
-        Circle(posx , posy , rad);
-        Circle(posx - Width, posy , rad);
+        Circle(positionX + Width, positionY, radius);
+        Circle(positionX , positionY , radius);
+        Circle(positionX - Width, positionY , radius);
        
        
     }
