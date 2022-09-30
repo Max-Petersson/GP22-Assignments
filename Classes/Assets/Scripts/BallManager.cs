@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BallManager : ProcessingLite.GP21
 {
@@ -10,18 +11,24 @@ public class BallManager : ProcessingLite.GP21
     private float timer = 3f;
     private float timerReset;
     private int amountOfBalls = 0;
+    int myInt;
+    PlayerMovement player;
+    private bool dead;
+    
     void Start()
     {
         timerReset = timer;
         balls = new Ball[maximumBalls];
+        player = new PlayerMovement();
     }
 
     // Update is called once per frame
     void Update()
     {
         timer -= Time.deltaTime;
-        if(timer <= 0f)
+        if(timer <= 0f) // Every third seconds do this
         {
+            //Add ball to array until there are 100 balls
             if (amountOfBalls <= maximumBalls)
             {
                 float x = Random.Range(0, Width - 1f);
@@ -32,21 +39,32 @@ public class BallManager : ProcessingLite.GP21
             }
            
             timer = timerReset;
-            //lägg till en boll i listan tills det finns 100 bollar i listan
+            
         }
-
+      
         Background(0, 0, 0);
-
+        
         for (int i = 0; i < amountOfBalls; i++)
         {
+            //Logic for the balls
             balls[i].Fill(balls[i].color1, balls[i].color2, 0);
             balls[i].Draw();
             balls[i].UpdatePos();
             balls[i].Walls();
-            // Spawnar bollar
+            dead = balls[i].CircleCollision(player);
+            if(dead == true)
+            {
+                PauseGame();
+                return;
+            }
         }
-
-        
+       
+        player.Move();
+    }
+    public void PauseGame()
+    {
+        Time.timeScale = 0;
+        Text("Game Over", Width/2, Height/2);
     }
     
 }
