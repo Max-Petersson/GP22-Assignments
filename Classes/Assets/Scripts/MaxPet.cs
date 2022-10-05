@@ -24,7 +24,7 @@ class MaxPet : MonoBehaviour, IRandomWalker
 
 	public Vector2 GetStartPosition(int playAreaWidth, int playAreaHeight)
 	{
-
+		
 		//Select a starting position or use a random one.
 		float x = Random.Range(1, playAreaWidth/2);
 		float y = Random.Range(1, playAreaHeight/2);
@@ -46,24 +46,7 @@ class MaxPet : MonoBehaviour, IRandomWalker
 	public Vector2 Movement()
 	{ 
 		ticks++; // implement logic for ticks maybe a list that stores the last 100 steps youve taken
-		Vector2 movement = Vector2.zero;
-
-		if (ticks == 1)
-		{
-			//hitta holder, jämför alla rects transform med din player position, på så sätt får jag min att jämföra med alla
-			holder = GameObject.Find("Holder");
-
-			for (int i = 0; i < holder.transform.childCount; i++)
-			{
-				if (playerPosition.x != holder.transform.GetChild(i).transform.position.x 
-					&& playerPosition.y != holder.transform.GetChild(i).transform.position.x)
-                {
-					otherPlayers.Add(holder.transform.GetChild(i));
-					Debug.Log(otherPlayers[0].transform.position);
-				}
-			}
-
-		}
+		Vector2 movement;
 
 		switch (Random.Range(0, 4))
         {
@@ -145,10 +128,26 @@ class MaxPet : MonoBehaviour, IRandomWalker
 			}
 		}
 
-
-		
 		playerPosition += movement;
+
+		if (ticks == 1)
+		{
+			holder = GameObject.Find("Holder");
+
+			for (int i = 0; i < holder.transform.childCount; i++)
+			{
+				otherPlayers.Add(holder.transform.GetChild(i));
+
+				if (playerPosition.x == holder.transform.GetChild(i).transform.position.x
+					&& playerPosition.y == holder.transform.GetChild(i).transform.position.x)
+				{
+					otherPlayers.RemoveAt(i);
+				}
+			}
+
+		}
 		//iveBeenHere.Add(playerPosition);
+		Debug.Log(otherPlayers.Count);
 		return movement;
 		
 	}
