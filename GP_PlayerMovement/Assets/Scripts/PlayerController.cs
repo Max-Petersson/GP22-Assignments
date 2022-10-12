@@ -7,17 +7,17 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private BoxCollider2D coll;
     [SerializeField] private LayerMask isJumpableGround;  
+
     private Vector2 movement;
-
+    
     private float dirx;
-    private float jumpPower = 5f;
-    private float shortHop = 2f;
-    private float speed = 5f;
-    private float fallingGravity = 3f;
+    [Header("Movement")]
+    [SerializeField] private float jumpPower = 6f;
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private float fallingGravity = 3f;
+    
+    private bool doShortHop;
     private float actualGravity;
-
-    private float jumpTime;
-    private float jumpTimeReset = 0.5f;
     private float cyoteTime = 0.3f;
     private float cyoteTimeCounter;
     private float jumpBuffer = 0.3f;
@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
 
         rb.freezeRotation = true;
         actualGravity = rb.gravityScale;
-        jumpTime = jumpTimeReset;
+       
     }
 
     // Update is called once per frame
@@ -49,25 +49,26 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             jumpBufferCounter = jumpBuffer;
+            doShortHop = false;
         }
-        if (Input.GetButton("Jump"))
+        else
         {
-            jumpTime-= Time.deltaTime;
+            jumpBufferCounter -= Time.deltaTime;
         }
+        
         if (Input.GetButtonUp("Jump"))
         {
-            jumpTime = 0;
+            cyoteTimeCounter = 0f;
+            doShortHop = true;
         }
 
         if (IsGrounded())
         {
             cyoteTimeCounter = cyoteTime;
             rb.gravityScale = actualGravity;
-            jumpTime = jumpTimeReset;
         }
         else
         {
-            jumpBufferCounter -= Time.deltaTime;
             cyoteTimeCounter -= Time.deltaTime;
         }
 
@@ -75,17 +76,19 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        rb.velocity = movement; // móve in the x direction
+        rb.velocity = movement; // move in the x direction
 
-        if (cyoteTimeCounter > 0f && jumpBufferCounter > 0f) // Do a short jump
-        {
-            rb.velocity = new Vector2(rb.velocity.x, shortHop);
-        }
-        if (jumpTime > 0f && rb.velocity.y > .1f) // mario ish jump
+        if (cyoteTimeCounter > 0f && jumpBufferCounter > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpPower);
+            jumpBufferCounter = 0f;
+        }
+        if (doShortHop == true && rb.velocity.y > .1f)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
         
+
         GravityControl(); //controls falling gravity;
     }
     private void GravityControl()
@@ -127,6 +130,15 @@ public class PlayerController : MonoBehaviour
         }
 
         anim.SetInteger("state", (int)state);
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Collectible"))
+        {
+            Destroy(collision.gameObject);
+
+            CanvasHandler.score++;
+        }
     }
 }
 
