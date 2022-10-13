@@ -14,18 +14,18 @@ public class PlayerController : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float jumpPower = 6f;
     [SerializeField] private float speed = 5f;
-    [SerializeField] private float fallingGravity = 3f;
-    
+    [SerializeField] private float fallingGravity = 20f;
+    [SerializeField] private float actualGravity = 10f;
     private bool doShortHop;
-    private float actualGravity;
-    private float cyoteTime = 0.3f;
+    
+    private float cyoteTime = 0.1f;
     private float cyoteTimeCounter;
     private float jumpBuffer = 0.3f;
     private float jumpBufferCounter;
 
     private Animator anim;
     private SpriteRenderer sprite;
-    private enum MovementState { idle, running, jumping, falling }
+    private enum MovementState { Idle, Running, Jump, Fall }
 
     void Start()
     {
@@ -35,11 +35,9 @@ public class PlayerController : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>();
 
         rb.freezeRotation = true;
-        actualGravity = rb.gravityScale;
        
     }
 
-    // Update is called once per frame
     void Update()
     {
         dirx = Input.GetAxisRaw("Horizontal");
@@ -87,7 +85,6 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
-        
 
         GravityControl(); //controls falling gravity;
     }
@@ -97,6 +94,10 @@ public class PlayerController : MonoBehaviour
         {
             rb.gravityScale = fallingGravity;
         }
+        else
+        {
+            rb.gravityScale = actualGravity;
+        }
     }
     private bool IsGrounded()
     {
@@ -105,31 +106,36 @@ public class PlayerController : MonoBehaviour
     private void AnimationUpdate()
     {
         MovementState state;
-        if (dirx > 0)
+        if (dirx > 0 && IsGrounded())
         {
-            state = MovementState.running;
+            state = MovementState.Running;
             sprite.flipX = false;
         }
-        else if (dirx < 0)
+        else if (dirx < 0 && IsGrounded())
         {
-            state = MovementState.running;
+            state = MovementState.Running;
             sprite.flipX = true;
         }
         else
         {
-            state = MovementState.idle;
+            state = MovementState.Idle;
         }
 
         if (rb.velocity.y > .1f)
         {
-            state = MovementState.jumping;
+            if (dirx > 0)
+                sprite.flipX = false;
+            state = MovementState.Jump;
         }
         else if (rb.velocity.y < -.1f)
         {
-            state = MovementState.falling;
+            if (dirx < 0)
+                sprite.flipX = true;
+            state = MovementState.Fall;
         }
 
-        anim.SetInteger("state", (int)state);
+        anim.Play(state.ToString());
+
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

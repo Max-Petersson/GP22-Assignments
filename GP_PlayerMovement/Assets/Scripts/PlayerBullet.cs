@@ -5,22 +5,19 @@ using UnityEngine;
 public class PlayerBullet : MonoBehaviour
 {
     [SerializeField] private List<AudioClip> audioClips;
-    BoxCollider2D coll;
+    [SerializeField] private float bulletSpeed;
+
     private AudioSource audioSource;
     private Vector3 mousePos;
     private Camera mainCam;
     private Rigidbody2D rb;
-    [SerializeField] private float bulletSpeed;
     private float timer = 1f;
 
     void Start()
     {
-        coll = GetComponent<BoxCollider2D>();
         audioSource = GetComponent<AudioSource>();
-        
-        AudioClip clip = audioClips[0];
-        audioSource.clip = clip;
-        audioSource.PlayOneShot(clip);
+
+        PlayClips(0);
 
         mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
@@ -33,21 +30,21 @@ public class PlayerBullet : MonoBehaviour
 
     }
 
-    // Update is called once per frame
+    private void PlayClips(int index)
+    {
+        AudioClip clip = audioClips[index];
+        audioSource.clip = clip;
+        audioSource.PlayOneShot(clip);
+    }
     void Update()
     {
-        timer -= Time.deltaTime;
-        if (timer < 0)
-        {
-            Destroy(gameObject);
-        }
+        Destroy(gameObject, timer);
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        AudioClip clip = audioClips[1];
-        audioSource.clip = clip;
-        audioSource.PlayOneShot(clip);
-        if (audioSource.isPlaying == false) // istället kanske gör en ienumerator istället
-            Destroy(gameObject);
+        PlayClips(1);
+        Destroy(gameObject);
     }
+   
+   
 }

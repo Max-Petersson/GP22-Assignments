@@ -76,7 +76,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.6226415, g: 0.0023495443, b: 0.0023495443, a: 1}
   m_FlipX: 0
@@ -103,7 +103,7 @@ MonoBehaviour:
   audioClips:
   - {fileID: 8300000, guid: b4f58eb4725fc1a429993566794472e0, type: 3}
   - {fileID: 8300000, guid: 2a2f5db89ea367c4ba2304ded81819d9, type: 3}
-  bulletSpeed: 7
+  bulletSpeed: 10
 --- !u!50 &-2438582913446313518
 Rigidbody2D:
   serializedVersion: 4
